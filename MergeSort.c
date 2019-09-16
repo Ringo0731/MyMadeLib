@@ -2,23 +2,10 @@
 
 #define MAX_ARRAY 100
 
-int DesideChange(int w[],int *i,int *j){
-    int ret;
-    if(w[*i] < w[*j]){
-        ret = w[*i];
-        *i += 1;
-    }else{
-        ret = w[*j];
-        *j -= 1;
-    }
-    return ret;
-}
-
 void MergeSort(int array[],int Left,int Right){
 
     int i,j,k,center;
     int work[MAX_ARRAY];
-    int (*funcp)(int*,int*,int*);
 
     if(Left<Right){
         center = (Left + Right)/2;
@@ -32,13 +19,15 @@ void MergeSort(int array[],int Left,int Right){
             work[Right-(j-(center+1))] = array[j];
         }
 
-        funcp = DesideChange;
-
         i = Left;
         j = Right;
 
         for(k = Left;k <= Right;k++){
-            array[k] = (*funcp)(work,&i,&j);
+            if(work[i] < work[j]){
+                array[k] = work[i++];
+            }else{
+                array[k] = work[j--];
+            }
         }
     }
 }
