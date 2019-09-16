@@ -1,24 +1,17 @@
 #include<stdio.h>
+#include<stdbool.h>
 
 #define MAX_ARRAY 100
 
-int DesideChange(int w[],int *i,int *j){
-    int ret;
-    if(w[*i] < w[*j]){
-        ret = w[*i];
-        *i += 1;
-    }else{
-        ret = w[*j];
-        *j -= 1;
-    }
-    return ret;
+bool Compare_Value(const void* a,const void* b){
+    return *((int*)a) < *((int*)b) ? true : false;
 }
 
-void MergeSort(int array[],int Left,int Right){
+void MergeSort(void* array[],int Left,int Right){
 
     int i,j,k,center;
-    int work[MAX_ARRAY];
-    int (*funcp)(int*,int*,int*);
+    void* work[MAX_ARRAY];
+    //int (*funcp)(int*,int*,int*);
 
     if(Left<Right){
         center = (Left + Right)/2;
@@ -32,13 +25,17 @@ void MergeSort(int array[],int Left,int Right){
             work[Right-(j-(center+1))] = array[j];
         }
 
-        funcp = DesideChange;
+        //funcp = DesideChange;
 
         i = Left;
         j = Right;
 
         for(k = Left;k <= Right;k++){
-            array[k] = (*funcp)(work,&i,&j);
+            if(Compare_Value(work[i],work[j])){
+                array[k] = work[i++];
+            }else{
+                array[k] = work[j--];
+            }
         }
     }
 }
@@ -47,17 +44,18 @@ int main(void){
 
     int array[MAX_ARRAY];
     int N,i;
+    void (*swap)(void*,int,int) = MergeSort;
 
     scanf("%d",&N);
     for(i = 0;i < N;i++){
         scanf("%d",&array[i]);
     }
 
-    MergeSort(array,0,N-1);
+    (*swap)((void*)array,0,N-1);
 
     printf("ソート結果：");
     for(i = 0;i < N;i++){
-        printf("%d ",array[i]);
+        printf("%d ",*((int*)array[i]));
     }
 
     printf("\n");
