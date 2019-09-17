@@ -3,21 +3,21 @@
 
 #define MAX_ARRAY 100
 
-bool Judge_Big_and_Smaii(const void* a,const void* b){
+bool Judge_Big_and_Small(const void* a,const void* b){
     int *A = (int*)a;
     int *B = (int*)b;
     return (*A < *B) ? true : false;
 }
 
-void MergeSort(void* array[],int Left,int Right){
+void MergeSort(void* array[],int Left,int Right,bool (*Swap)(void*,void*)){
 
     int i,j,k,center;
     void* work[MAX_ARRAY];
 
     if(Left<Right){
         center = (Left + Right)/2;
-        MergeSort(array,Left,center);
-        MergeSort(array,center+1,Right);
+        MergeSort(array,Left,center,(*Swap));
+        MergeSort(array,center+1,Right,(*Swap));
 
         for(i = center;i >= Left;i--){
             work[i] = array[i];
@@ -30,7 +30,7 @@ void MergeSort(void* array[],int Left,int Right){
         j = Right;
 
         for(k = Left;k <= Right;k++){
-            if(Judge_Big_and_Smaii(work[i],work[j])){
+            if((*Swap)(work[i],work[j])){
                 array[k] = work[i++];
             }else{
                 array[k] = work[j--];
@@ -43,15 +43,14 @@ int main(void){
 
     int array[MAX_ARRAY];
     int N,i;
-    //void (*sort)(void** ,int, int) = MergeSort;
+    bool (*Swap)(void*,void*) = Judge_Big_and_Small;
 
     scanf("%d",&N);
     for(i = 0;i < N;i++){
         scanf("%d",&array[i]);
     }
 
-    //(*sort)((void*)array,0,N-1);
-    MergeSort((void*)array,0,N-1);
+    MergeSort((void*)array,0,N-1,(*Swap));
 
     printf("ソート結果：");
     for(i = 0;i < N;i++){
