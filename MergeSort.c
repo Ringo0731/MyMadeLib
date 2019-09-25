@@ -1,23 +1,22 @@
 #include<stdio.h>
-#include<stdbool.h>
 
 #define MAX_ARRAY 100
 
-bool Judge_Big_and_Small(const void* a,const void* b){
-    int *A = (int*)a;
-    int *B = (int*)b;
-    return (*A < *B) ? true : false;
+int is1stSmall(void* a,void* b){
+    int A = *(int*)a;
+    int B = *(int*)b;
+    return (A < B) ? 1 : -1;
 }
 
-void MergeSort(void* array[],int Left,int Right,bool (*Swap)(void*,void*)){
-
+void MergeSort(void* array[],int Left,int Right,int (*mustSwap)(void*,void*)){
+    
     int i,j,k,center;
     void* work[MAX_ARRAY];
 
     if(Left<Right){
         center = (Left + Right)/2;
-        MergeSort(array,Left,center,(*Swap));
-        MergeSort(array,center+1,Right,(*Swap));
+        MergeSort(array,Left,center,mustSwap);
+        MergeSort(array,center+1,Right,mustSwap);
 
         for(i = center;i >= Left;i--){
             work[i] = array[i];
@@ -30,7 +29,7 @@ void MergeSort(void* array[],int Left,int Right,bool (*Swap)(void*,void*)){
         j = Right;
 
         for(k = Left;k <= Right;k++){
-            if((*Swap)(work[i],work[j])){
+            if((*mustSwap)(work[i],work[j]) > 0){
                 array[k] = work[i++];
             }else{
                 array[k] = work[j--];
@@ -42,19 +41,24 @@ void MergeSort(void* array[],int Left,int Right,bool (*Swap)(void*,void*)){
 int main(void){
 
     int array[MAX_ARRAY];
+    void* Sorted_array[MAX_ARRAY];
     int N,i;
-    bool (*Swap)(void*,void*) = Judge_Big_and_Small;
+    int (*mustSwap)(void*,void*) = is1stSmall;
 
     scanf("%d",&N);
     for(i = 0;i < N;i++){
         scanf("%d",&array[i]);
     }
 
-    MergeSort((void*)array,0,N-1,(*Swap));
+    for(i = 0;i < N;i++){
+        Sorted_array[i] = (void*)&array[i];
+    }
+
+    MergeSort(Sorted_array,0,N-1,mustSwap);
 
     printf("ソート結果：");
     for(i = 0;i < N;i++){
-        printf("%d ",(int)array[i]);
+        printf("%d ",*(int*)Sorted_array[i]);
     }
 
     printf("\n");
